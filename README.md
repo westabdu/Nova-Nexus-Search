@@ -148,8 +148,27 @@ pip install -r requirements.txt
 pip install ddgs -U
 ```
 
-### 3. Yapılandırma
-`.env` dosyanızı oluşturun ve anahtarlarınızı girin. Uygulama içindeki **Profil** sekmesinden de anahtarlarınızı canlı olarak güncelleyebilirsiniz.
+### 3. Yapılandırma (Çevresel Değişkenler)
+Projenin ana dizininde bir `.env` dosyası oluşturun ve aşağıdaki şablonu kullanın. Bu anahtarlar, kullanıcılar kendininkini girmedikçe sistemin varsayılanı olarak kullanılacaktır.
+
+```env
+# 🌌 Nova Nexus Search - Örnek Yapılandırma
+# Bu dosyayı .env olarak kopyalayın ve kendi anahtarlarınızı girin
+
+# 1. Groq API (Llama modelleri için - https://console.groq.com)
+GROQ_API_KEY=gsk_xxxxxxxxxxxx
+
+# 2. Google Gemini API (Büyük context analizi için - https://aistudio.google.com)
+GEMINI_API_KEY=AIzaSy_xxxxxxxxxxxx
+
+# 3. DeepSeek API (Reasoner model için - https://platform.deepseek.com)
+DEEPSEEK_API_KEY=sk-xxxxxxxxxxxx
+
+# 4. JWT Güvenlik Anahtarı (Rastgele ve karmaşık bir değer girin)
+# Terminalde şu komutla profesyonel bir anahtar üretebilirsin:
+# python -c "import secrets; print(secrets.token_urlsafe(32))"
+SECRET_KEY=supersecretkeychangeit_nova_nexus_2025
+```
 
 ### 4. Başlatma
 ```bash
