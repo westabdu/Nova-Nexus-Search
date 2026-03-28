@@ -14,39 +14,73 @@
 Aşağıdaki şema, bir arama sorgusunun başlangıcından raporun kullanıcıya ulaştığı ana kadar izlediği yolu göstermektedir:
 
 ```mermaid
-graph TD
-    subgraph "İstemci Katmanı (Frontend)"
-        A[Flet UI Dashboard] -->|WebSocket JSON| B[WS Manager]
+graph TB
+    %% --- Sinif Tanimlari (Profesyonel Renk Paleti) ---
+    classDef frontend fill:#1a1a2e,stroke:#0f3460,stroke-width:2px,color:#fff;
+    classDef backend fill:#16213e,stroke:#e94560,stroke-width:2px,color:#fff;
+    classDef ai fill:#0f3460,stroke:#533483,stroke-width:3px,color:#fff;
+    classDef external fill:#1b1b1b,stroke:#444,stroke-dasharray: 5 5,color:#aaa;
+    classDef validator fill:#1b4332,stroke:#2d6a4f,stroke-width:2px,color:#fff;
+
+    %% --- Katman 1: Kullanici Etkilesimi ---
+    subgraph "🌐 CLIENT INTERFACE"
+        UI[("🖥️ Flet Neo-Cyber Dashboard")]
+        WS_M["🔌 Real-time WS Manager"]
     end
 
-    subgraph "Sunucu Katmanı (FastAPI Backend)"
-        B --> C[Research Agent]
-        C --> D{Query Gen}
-        D -->|Search Queries| E[Search Engine]
+    %% --- Katman 2: Beyin (Backend) ---
+    subgraph "🧠 CORE INTELLIGENCE"
+        AGENT["🤖 Research Agent (Orchestrator)"]
+        QGEN["🔍 Multi-Query Generator"]
+        CLEAN["🧹 Markdown Content Purifier"]
     end
 
-    subgraph "Veri ve Madencilik (Data Layer)"
-        E -->|API Search| F[DuckDuckGo / DDGS]
-        F --> G[Jina Reader / Scraper]
-        G --> H[Content Cleaner]
+    %% --- Katman 3: Veri Kaynaklari ---
+    subgraph "📡 EXTERNAL DATA MINING"
+        DDGS["🦆 DuckDuckGo Engine"]
+        JINA["📄 Jina Reader PDF/Web"]
+        FALL["🌐 HTTPx Fallback"]
     end
 
-    subgraph "Yapay Zeka Kümesi (AI Hybrid Cluster)"
-        H --> I{Hybrid AI Router}
-        I -->|Task: Filter| J[Llama 3.1 8B - Groq]
-        I -->|Task: Reasoning| K[DeepSeek Reasoner]
-        I -->|Context < 25K| L[Llama 3.3 70B - Groq]
-        I -->|Context > 25K| M[Gemini 1.5 Flash]
+    %% --- Katman 4: Yapay Zeka Hibrit Katmani ---
+    subgraph "⚡ HYBRID AI CLUSTER (Routing Logic)"
+        ROUTER{"🧭 AI Model Router"}
+        LLAMA_S["🦙 Llama 3.1 8B (Fast Filter)"]
+        LLAMA_L["⚔️ Llama 3.3 70B (Synthesis)"]
+        GEMINI["♊ Gemini 1.5 Flash (Long Context)"]
+        DEEP["🧬 DeepSeek Reasoner (Logic)"]
     end
 
-    subgraph "Doğrulama ve Çıktı"
-        J & K & L & M --> N[Sentinel AI Validator]
-        N --> O[PDF/HTML Export]
-        O -->|Done Signal| A
+    %% --- Katman 5: Kalite Kontrol ---
+    subgraph "🛡️ QUALITY ASSURANCE"
+        VAL["✅ Sentinel Validator"]
+        REP["📊 Report Generator (PDF/MD)"]
     end
 
-    style I fill:#f96,stroke:#333,stroke-width:4px
-    style N fill:#bbf,stroke:#333,stroke-width:2px
+    %% --- Akis Baglantilari ---
+    UI -->|Sorgu Gönder| WS_M
+    WS_M <--> AGENT
+    AGENT --> QGEN
+    QGEN --> DDGS
+    DDGS --> JINA
+    JINA --> CLEAN
+    CLEAN --> ROUTER
+
+    ROUTER -.->|Token < 25K| LLAMA_L
+    ROUTER -.->|Token > 25K| GEMINI
+    ROUTER -.->|Hizli Süzme| LLAMA_S
+    ROUTER -.->|Muhakeme| DEEP
+
+    LLAMA_L & GEMINI & LLAMA_S & DEEP --> VAL
+    VAL --> REP
+    REP -.->|Final Yanit| WS_M
+
+    %% --- Stil Atamalari ---
+    class UI,WS_M frontend;
+    class AGENT,QGEN,CLEAN backend;
+    class ROUTER,LLAMA_S,LLAMA_L,GEMINI,DEEP ai;
+    class DDGS,JINA,FALL external;
+    class VAL,REP validator;
 ```
 
 ---
