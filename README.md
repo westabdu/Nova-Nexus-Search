@@ -1,4 +1,4 @@
-# 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi NOT: BU SİSTEM DEMO SÜRÜMÜDÜR HALA GELİŞTİRİLME AŞAMASINDADIR!!!
+# 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi
 
 **Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten **akıllı bir bilgi madenciliği istasyonudur.**
 
@@ -6,6 +6,17 @@
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge&logo=fastapi)
 ![Flet](https://img.shields.io/badge/Flet-UI-orange?style=for-the-badge&logo=dart)
+
+---
+
+> [!CAUTION]
+> ### ⚠️ KRİTİK UYARI / DISCLAIMER (ÖNEMLİ)
+> 
+> **🧪 Deney Aşamasında (Alpha/Demo):** Bu sistem henüz gelişiminin erken bir aşamasındadır. Elde edilen veriler, analizler ve raporlar **%100 doğruluk garantisi vermez.** İş kritik kararlarınızda tek kaynak olarak kullanmayınız.
+> 
+> **🧠 Halüsinasyon Riski:** Yapay zeka ajanları, nadiren de olsa veriler arasında yanlış bağlantılar kurabilir veya "Halüsinasyon" (gerçek dışı bilgi üretimi) yaşayabilir. Sentinel AI doğrulama sistemimiz bu riski minimize etse de, sunulan bilgileri her zaman manuel olarak kontrol etmeniz **hayati önem taşır.**
+> 
+> **⚖️ Sorumluluk Sınırı:** Bu yazılımın kullanımı sırasında oluşabilecek herhangi bir veri kaybı, maddi/manevi zarar veya yanlış bilgilendirme süreçlerinden **Geliştirici (Abdurahman)** sorumlu tutulamaz. Yazılım "olduğu gibi" (As-Is) sunulmaktadır.
 
 ---
 
