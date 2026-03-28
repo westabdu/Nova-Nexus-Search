@@ -1,4 +1,4 @@
-# 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi
+# 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi NOT: BU SİSTEM DEMO SÜRÜMÜDÜR HALA GELİŞTİRİLME AŞAMASINDADIR!!!
 
 **Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten **akıllı bir bilgi madenciliği istasyonudur.**
 
