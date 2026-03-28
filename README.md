@@ -1,6 +1,6 @@
 # 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi
 
-**Nova Nexus Search**, klasik arama motorlarının ötesine geçerek interneti bir bilgi madeni gibi kazıyan, verileri doğrulayan ve en gelişmiş yapay zeka modelleriyle sentezleyen **yeni nesil bir hibrit araştırma motorudur.**
+**Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten **akıllı bir bilgi madenciliği istasyonudur.**
 
 ![Nova Nexus Logo](https://img.shields.io/badge/Nova_Nexus-v1.0-blueviolet?style=for-the-badge&logo=rocket)
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
@@ -9,153 +9,149 @@
 
 ---
 
-## 🏗️ Sistem Mimarisi ve Çalışma Şeması
+## 🏗️ Sistem Mimarisi ve Karar Mekanizması
 
-Aşağıdaki şema, bir arama sorgusunun başlangıcından raporun kullanıcıya ulaştığı ana kadar izlediği yolu göstermektedir:
+Aşağıdaki şema, sistemin çok katmanlı yapısını ve bir sorgunun "Ham Veri"den "Doğrulanmış Rapor"a dönüşüm sürecini profesyonel bir hiyerarşiyle göstermektedir:
 
 ```mermaid
 graph TB
-    %% --- Sinif Tanimlari (Profesyonel Renk Paleti) ---
+    %% --- Sinif Tanimlari ---
     classDef frontend fill:#1a1a2e,stroke:#0f3460,stroke-width:2px,color:#fff;
     classDef backend fill:#16213e,stroke:#e94560,stroke-width:2px,color:#fff;
     classDef ai fill:#0f3460,stroke:#533483,stroke-width:3px,color:#fff;
-    classDef external fill:#1b1b1b,stroke:#444,stroke-dasharray: 5 5,color:#aaa;
-    classDef validator fill:#1b4332,stroke:#2d6a4f,stroke-width:2px,color:#fff;
+    classDef data fill:#1b1b1b,stroke:#444,stroke-dasharray: 5 5,color:#aaa;
+    classDef gold fill:#432818,stroke:#99582a,stroke-width:2px,color:#fff;
 
-    %% --- Katman 1: Kullanici Etkilesimi ---
-    subgraph "🌐 CLIENT INTERFACE"
+    %% --- Giriş ve Seçim ---
+    subgraph "🌐 KULLANICI ARAYÜZÜ (CLIENT)"
         UI[("🖥️ Flet Neo-Cyber Dashboard")]
-        WS_M["🔌 Real-time WS Manager"]
+        DEPTH{"🎯 Araştırma Derinliği Seçimi"}
     end
 
-    %% --- Katman 2: Beyin (Backend) ---
-    subgraph "🧠 CORE INTELLIGENCE"
+    %% --- Derinlik Mantığı ---
+    subgraph "⚡ ARAŞTIRMA MODLARI (LOGIC)"
+        SURF["🔹 Yüzeysel (Hızlı)"]
+        MED["🔸 Orta (Dengeli)"]
+        DEEP["💎 Derin (Detaylı)"]
+        ULTRA["🔥 Ultra (Akademik)"]
+    end
+
+    %% --- Beyin ve Arama ---
+    subgraph "🧠 CORE ENGINE"
         AGENT["🤖 Research Agent (Orchestrator)"]
-        QGEN["🔍 Multi-Query Generator"]
-        CLEAN["🧹 Markdown Content Purifier"]
+        QGEN["🔍 Multi-Query Gen"]
+        SEARCH["📡 Search Engine (DDGS + Jina)"]
     end
 
-    %% --- Katman 3: Veri Kaynaklari ---
-    subgraph "📡 EXTERNAL DATA MINING"
-        DDGS["🦆 DuckDuckGo Engine"]
-        JINA["📄 Jina Reader PDF/Web"]
-        FALL["🌐 HTTPx Fallback"]
+    %% --- Hibrit AI Cluster ---
+    subgraph "🔮 DİNAMİK AI YÖNLENDİRİCİ (SMART ROUTER)"
+        ROUTE{"🧭 Yük Dengeleyici"}
+        L8B["🦙 Llama 3.1 8B (Filter)"]
+        L70B["⚔️ Llama 3.3 70B (Synthesis)"]
+        GEM["♊ Gemini 1.5 Flash (Big Context)"]
+        DSEEK["🧬 DeepSeek Reasoner"]
     end
 
-    %% --- Katman 4: Yapay Zeka Hibrit Katmani ---
-    subgraph "⚡ HYBRID AI CLUSTER (Routing Logic)"
-        ROUTER{"🧭 AI Model Router"}
-        LLAMA_S["🦙 Llama 3.1 8B (Fast Filter)"]
-        LLAMA_L["⚔️ Llama 3.3 70B (Synthesis)"]
-        GEMINI["♊ Gemini 1.5 Flash (Long Context)"]
-        DEEP["🧬 DeepSeek Reasoner (Logic)"]
-    end
+    %% --- İşleme Akışı ---
+    UI --> DEPTH
+    DEPTH -->|Yüzeysel: 5 Kaynak| SURF
+    DEPTH -->|Orta: 15 Kaynak| MED
+    DEPTH -->|Derin: 30 Kaynak| DEEP
+    DEPTH -->|Ultra: 50 Kaynak| ULTRA
 
-    %% --- Katman 5: Kalite Kontrol ---
-    subgraph "🛡️ QUALITY ASSURANCE"
-        VAL["✅ Sentinel Validator"]
-        REP["📊 Report Generator (PDF/MD)"]
-    end
-
-    %% --- Akis Baglantilari ---
-    UI -->|Sorgu Gönder| WS_M
-    WS_M <--> AGENT
+    SURF & MED & DEEP & ULTRA --> AGENT
     AGENT --> QGEN
-    QGEN --> DDGS
-    DDGS --> JINA
-    JINA --> CLEAN
-    CLEAN --> ROUTER
+    QGEN --> SEARCH
+    SEARCH --> ROUTE
 
-    ROUTER -.->|Token < 25K| LLAMA_L
-    ROUTER -.->|Token > 25K| GEMINI
-    ROUTER -.->|Hizli Süzme| LLAMA_S
-    ROUTER -.->|Muhakeme| DEEP
+    ROUTE -->|Sorgu Filtreleme| L8B
+    ROUTE -->|Bağlam < 25K Char| L70B
+    ROUTE -->|Bağlam > 25K Char| GEM
+    ROUTE -->|Zorlu Mantık Hatası| DSEEK
 
-    LLAMA_L & GEMINI & LLAMA_S & DEEP --> VAL
-    VAL --> REP
-    REP -.->|Final Yanit| WS_M
+    L8B & L70B & GEM & DSEEK --> VAL[("🛡️ Sentinel AI Validator")]
+    VAL --> FINAL[("📊 Final Premium Rapor")]
+    FINAL -.->|WebSocket| UI
 
-    %% --- Stil Atamalari ---
-    class UI,WS_M frontend;
-    class AGENT,QGEN,CLEAN backend;
-    class ROUTER,LLAMA_S,LLAMA_L,GEMINI,DEEP ai;
-    class DDGS,JINA,FALL external;
-    class VAL,REP validator;
+    %% --- Atamalar ---
+    class UI,DEPTH frontend;
+    class SURF,MED,DEEP,ULTRA gold;
+    class AGENT,QGEN,SEARCH backend;
+    class ROUTE,L8B,L70B,GEM,DSEEK ai;
 ```
 
 ---
 
-## 🔍 Bir Araştırma Nasıl Gerçekleşir? (Adım Adım)
+## 🌡️ Araştırma Derinliği Seviyeleri
 
-1.  **Sorgu Analizi:** Kullanıcı arama yaptığında, sistem önce konuyu analiz eder ve en iyi sonuçları almak için 3-5 adet teknik alt sorgu üretir.
-2.  **Bilgi Toplama:** DuckDuckGo üzerinden tüm dünya çapında tarama yapılır. Bulunan her URL, **Jina Reader** kullanılarak reklam/bannerlardan arındırılmış saf Markdown metnine dönüştürülür.
-3.  **Hibrit Filtreleme (Hız):** Toplanan onlarca kaynak, **Llama 3.1 8B** (Groq) üzerinden saniyeler içinde taranır. Sadece konuyla en alakalı olan en iyi 15 kaynak seçilir.
-4.  **Akıllı Yönlendirme (Router):** 
-    *   Eğer toplam veri **25.000 karakterden az** ise **Llama 3.3 70B** kullanılır (Yüksek doğruluk).
-    *   Eğer veri **25.000 karakterden fazla** ise devasa hafızasıyla **Gemini 1.5 Flash** devreye girer.
-5.  **Doğrulama (Sentinel):** Yazılan rapor son bir kez "Çapraz Kontrole" girer. Yapay zeka kendi yazdığı rapordaki çelişkileri denetler ve bir **Güvenilirlik Skoru** üretir.
-6.  **Arşivleme:** Tüm süreç `nova_nexus.db` (SQLite) veritabanına kaydedilir ve kullanıcıya anlık WebSocket üzerinden iletilir.
+Nova Nexus Search, ihtiyacınıza göre 4 farklı katmanda araştırma yürütebilir. Her katman, harcanan token ve taranan kaynak sayısına göre optimize edilmiştir:
 
----
-
-## 🛠️ Gerekli Paketler ve Teknoloji Yığını
-
-Uygulamanın çalışması için aşağıdaki kritik kütüphaneler kullanılmaktadır:
-
-| Paket | Görevi |
-| :--- | :--- |
-| **fastapi / uvicorn** | Yüksek performanslı asenkron API sunucusu ve WebSocket yönetimi. |
-| **flet** | Flutter tabanlı, Python ile yazılmış modern ve dinamik kullanıcı arayüzü. |
-| **ddgs (duckduckgo_search)** | Ücretsiz ve gizlilik odaklı web araması yapmayı sağlar. |
-| **httpx** | Jina Reader ve diğer dış servislere asenkron HTTP istekleri atmak için. |
-| **loguru** | Gelişmiş, renkli ve dosya tabanlı hata takip sistemi (Logging). |
-| **sqlalchemy** | Veritabanı (SQLite) yönetimi ve ORM işlemleri. |
-| **pydantic v2** | Veri tipi doğrulama ve JSON şemalarının yönetimi. |
-| **groq / google-generativeai / openai** | AI modelleriyle iletişim kuran resmi SDK'lar. |
+| Mod | Kaynak Sayısı | AI Analiz Gücü | Kullanım Amacı | Hız |
+| :--- | :---: | :--- | :--- | :---: |
+| **🔹 Yüzeysel** | 5 | Llama 8B | Hızlı cevaplar, kısa tanımlar. | ⚡ Şimşek |
+| **🔸 Orta** | 15 | Llama 70B | Genel konu araştırması, ödev hazırlığı. | 🏃 Hızlı |
+| **💎 Derin** | 30 | Hybrid (70B & Gemini) | Teknik analiz, detaylı pazar araştırması. | 🧘 Sabırlı |
+| **🔥 Ultra** | 50+ | Gemini & DeepSeek | Akademik makale, karşılaştırmalı tez çalışması. | 🐢 Kapsamlı |
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma
+## ⚡ Akıllı Hibrit Yönlendirme Özelliği
 
-### 1. Dosya Hazırlığı
-Bilgisayarınızda Python 3.12 yüklü olduğundan emin olun.
+Sistemimiz, tek bir modele bağlı kalmaz. Girdiğiniz verinin boyutuna göre saniyeler içinde karar verir:
+*   **Küçük Veri (< 25.000 Karakter):** Dünyanın en iyi denge modeli olan **Llama 3.3 70B**'yi (Groq) kullanır. Hatasız sentez yapar.
+*   **Devasa Veri (> 25.000 Karakter):** Llama'nın limitlerini aştığımızda, 1 milyon token hafızalı **Gemini 1.5 Flash** bayrağı devralır. Hiçbir detayı atlamaz.
+*   **Karmaşık Sorunlar:** Eğer prompt "Düşünme/Muhakeme" gerektiriyorsa **DeepSeek Reasoner** (Thinking Mode) devreye girerek adım adım mantık yürütür.
+
+---
+
+## 🛠️ Teknik Yetenekler (Packages & Core)
+
+| Bileşen | Teknoloji | Fonksiyonu |
+| :--- | :---: | :--- |
+| **Backend** | `FastAPI` | Asenkron, yüksek hızda WebSocket ve REST API. |
+| **Frontend** | `Flet (Flutter)` | Neon-Cyberpunk temalı, premium masaüstü/web GUI. |
+| **Arama** | `DDGS / ddgs` | Reklam engellemeli, sansürsüz DuckDuckGo araması. |
+| **Okuyucu** | `Jina Reader` | Web sayfalarını %95 doğrulukla saf metne dönüştürür. |
+| **Logging** | `Loguru` | Gerçek zamanlı terminal takibi ve hata yönetimi. |
+| **DB** | `SQLite / Alchemy` | Kullanıcı API anahtarları ve araştırma geçmişi arşivi. |
+
+---
+
+## 🚀 Kurulum Rehberi
+
+### 1. Hazırlık
+Python 3.12+ kurulu olmalıdır.
 ```bash
 git clone https://github.com/nihai/nova-nexus-search.git
 cd nova-nexus-search
 ```
 
-### 2. Bağımlılık Karargahı
+### 2. Ortamı Kurma (Windows)
 ```bash
-# Sanal ortam oluşturma
+# Sanal ortam oluşturun
 python -m venv proje
-source proje/bin/activate  # Windows: proje\Scripts\activate
+proje\Scripts\activate
 
-# Paketleri yükleme
+# Bağımlılıkları yükleyin (Ultra Hızlı)
 pip install -r requirements.txt
-pip install ddgs -U  # Arama modülünü güncel tutun
+pip install ddgs -U
 ```
 
-### 3. Anahtar Yapılandırması (.env)
-Aşağıdaki gibi bir `.env` dosyası oluşturun:
-```env
-JWT_SECRET=nexus_secret_key_123
-DATABASE_URL=sqlite:///./nova_nexus.db
-# API Anahtarlarınızı isterseniz buraya isterseniz uygulama içine girin
-GROQ_API_KEY=your_key
-GEMINI_API_KEY=your_key
-DEEPSEEK_API_KEY=your_key
-```
+### 3. Yapılandırma
+`.env` dosyanızı oluşturun ve anahtarlarınızı girin. Uygulama içindeki **Profil** sekmesinden de anahtarlarınızı canlı olarak güncelleyebilirsiniz.
 
-### 4. Ateşleme
+### 4. Başlatma
 ```bash
 python start.py
 ```
 
 ---
 
-## 🛡️ Güvenlik ve Gizlilik
-*   **Kişisel Anahtarlar:** API anahtarları veritabanında saklanır ancak her kullanıcı sadece kendi anahtarını kullanır.
-*   **Oturum Güvenliği:** JWT tabanlı token sistemi ve 2FA (Çift Faktörlü Doğrulama) desteği altyapıda mevcuttur.
+## 🛡️ Sentinel AI Doğrulama Sistemi
+Oluşturulan her rapor, **Sentinel AI** adını verdiğimiz bir çapraz kontrol mekanizmasından geçer. Bu modül:
+- Yazılan bilgilerin kaynaklarla çelişip çelişmediğini denetler.
+- "Halüsinasyon" (AI uydurması) riskini analiz eder.
+- Rapora 1-10 arası bir **Güvenilirlik Skoru** atayarak sizi yanıltıcı bilgilerden korur.
 
 ---
-*Nova Nexus Search - Veriyi Bilgiye, Bilgiyi Güce Dönüştürün.*
+*Nova Nexus Search - Bilginin Sınırlarını Keşfedin.*
