@@ -31,16 +31,14 @@ class Settings:
     RATE_LIMIT_PER_MINUTE: int = 30                 # IP başına dakikada max istek
 
     # ─── API Keys ────────────────────────────────────────────────
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
 
-    # ─── SMTP E-posta ────────────────────────────────────────────
-    SMTP_SERVER: str = os.getenv("SMTP_SERVER", "")
+    # ─── SMTP E-posta (Gmail) ───────────────────────────────────
+    SMTP_SERVER: str = os.getenv("SMTP_SERVER", "smtp.gmail.com")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USER: str = os.getenv("SMTP_USER", "")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
-    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", "noreply@novanexus.app")
-
+    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", "")
 
 
 settings = Settings()

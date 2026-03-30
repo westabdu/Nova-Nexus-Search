@@ -16,9 +16,7 @@ class UserBase(SQLModel):
     username: str
     is_active: bool = True
     quota_remaining: int = 10
-    groq_api_key: Optional[str] = Field(default=None)
-    gemini_api_key: Optional[str] = Field(default=None)
-    deepseek_api_key: Optional[str] = Field(default=None)
+    openrouter_api_key: Optional[str] = Field(default=None)
 
 
 class User(UserBase, table=True):
@@ -27,6 +25,8 @@ class User(UserBase, table=True):
     api_key: Optional[str] = Field(default=None, unique=True, index=True)
     api_key_last_used: Optional[datetime] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    reset_code: Optional[str] = None
+    reset_code_expires: Optional[datetime] = None
 
     # 2FA
     totp_enabled: bool = Field(default=False)
@@ -98,9 +98,7 @@ class UserResponse(UserBase):
     last_login: Optional[datetime] = None
     created_at: Optional[datetime] = None
     is_admin: bool = False
-    groq_api_key: Optional[str] = None
-    gemini_api_key: Optional[str] = None
-    deepseek_api_key: Optional[str] = None
+    openrouter_api_key: Optional[str] = None
 
 
 class TOTPSetupResponse(SQLModel):

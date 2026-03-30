@@ -19,3 +19,7 @@ loguru
 aiofiles
 jinja2
 beautifulsoup4
+openai
+aiohttp
+aiohttp-socks
+arxiv

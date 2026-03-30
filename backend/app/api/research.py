@@ -34,9 +34,7 @@ async def research_websocket(session_id: str, websocket: WebSocket):
         user_email = data.get("user_email", "")
         
         # Kullanıcıya Özel AI Anahtarları
-        groq_api_key = data.get("groq_api_key", "")
-        gemini_api_key = data.get("gemini_api_key", "")
-        deepseek_api_key = data.get("deepseek_api_key", "")
+        openrouter_api_key = data.get("openrouter_api_key", "")
 
         # Gelişmiş filtreler
         time_filter = data.get("time_filter", "all")       # all | 1y | 5y
@@ -53,9 +51,7 @@ async def research_websocket(session_id: str, websocket: WebSocket):
         agent = ResearchAgent(
             progress_callback=lambda msg: manager.send_progress(session_id, msg),
             cancel_check=lambda: session_id in _cancelled_sessions,
-            groq_key=groq_api_key,
-            gemini_key=gemini_api_key,
-            deepseek_key=deepseek_api_key,
+            openrouter_key=openrouter_api_key,
         )
 
         # Arka planda iptal mesajı dinle

@@ -49,9 +49,7 @@ def build_auth_view(page: ft.Page, api_client, on_login_success, current_lang: s
     email_field = ft.TextField(hint_text="E-posta", prefix_icon=ft.icons.EMAIL_ROUNDED, **_field_style)
     password_field = ft.TextField(hint_text="Şifre", prefix_icon=ft.icons.LOCK_ROUNDED, password=True, can_reveal_password=True, **_field_style)
     username_field = ft.TextField(hint_text="Kullanıcı Adı", prefix_icon=ft.icons.PERSON_ROUNDED, visible=False, **_field_style)
-    groq_key_field = ft.TextField(hint_text="Groq API Key (İsteğe Bağlı)", prefix_icon=ft.icons.KEY, visible=False, password=True, can_reveal_password=True, **_field_style)
-    gemini_key_field = ft.TextField(hint_text="Gemini API Key (İsteğe Bağlı)", prefix_icon=ft.icons.KEY, visible=False, password=True, can_reveal_password=True, **_field_style)
-    deepseek_key_field = ft.TextField(hint_text="DeepSeek API Key (İsteğe Bağlı)", prefix_icon=ft.icons.KEY, visible=False, password=True, can_reveal_password=True, **_field_style)
+    openrouter_key_field = ft.TextField(hint_text="OpenRouter API Key (İsteğe Bağlı)", prefix_icon=ft.icons.KEY, visible=False, password=True, can_reveal_password=True, **_field_style)
     
     totp_field = ft.TextField(
         hint_text="Google Auth (6 Hane)", prefix_icon=ft.icons.SECURITY_ROUNDED,
@@ -217,9 +215,7 @@ def build_auth_view(page: ft.Page, api_client, on_login_success, current_lang: s
         email_field.visible = False
         password_field.visible = False
         username_field.visible = False
-        groq_key_field.visible = False
-        gemini_key_field.visible = False
-        deepseek_key_field.visible = False
+        openrouter_key_field.visible = False
         links_row.visible = False
         action_btn.visible = False
         strength_bar_bg.visible = False
@@ -265,9 +261,7 @@ def build_auth_view(page: ft.Page, api_client, on_login_success, current_lang: s
                 username = username_field.value.strip() or email.split("@")[0]
                 data = api_client.register(
                     email=email, password=password, username=username,
-                    groq_key=groq_key_field.value.strip(),
-                    gemini_key=gemini_key_field.value.strip(),
-                    deepseek_key=deepseek_key_field.value.strip()
+                    openrouter_key=openrouter_key_field.value.strip()
                 )
                 api_client.user_info = {"email": email, **data}
                 login_data = api_client.login(email=email, password=password)
@@ -283,7 +277,7 @@ def build_auth_view(page: ft.Page, api_client, on_login_success, current_lang: s
                     title_text.value = "2FA Doğrulama"
                     subtitle_text.value = "Authenticator kodunuzu girin."
                     email_field.visible = password_field.visible = username_field.visible = False
-                    groq_key_field.visible = gemini_key_field.visible = deepseek_key_field.visible = False
+                    openrouter_key_field.visible = False
                     totp_field.visible = True
                     action_btn.content.controls[0].value = "Doğrula"
                     links_row.visible = False
@@ -298,9 +292,7 @@ def build_auth_view(page: ft.Page, api_client, on_login_success, current_lang: s
     def toggle_mode(e):
         is_register[0] = not is_register[0]
         username_field.visible = is_register[0]
-        groq_key_field.visible = is_register[0]
-        gemini_key_field.visible = is_register[0]
-        deepseek_key_field.visible = is_register[0]
+        openrouter_key_field.visible = is_register[0]
         forgot_btn.visible = not is_register[0]
         title_text.value = "Hesap Oluştur" if is_register[0] else "Tekrar Hoş Geldiniz"
         subtitle_text.value = "Yeni bir hesap oluşturarak güçlü asistanı kullanın" if is_register[0] else "Sentinel AI ile Araştırmaya Devam Edin"
@@ -334,7 +326,7 @@ def build_auth_view(page: ft.Page, api_client, on_login_success, current_lang: s
                 ft.Container(height=8),
                 error_box,
                 username_field, email_field, password_field,
-                groq_key_field, gemini_key_field, deepseek_key_field,
+                openrouter_key_field,
                 ft.Row([strength_bar_bg, strength_label], spacing=8, vertical_alignment=ft.CrossAxisAlignment.CENTER),
                 rules_row, totp_field, setup_2fa_ui,
                 ft.Container(height=8),

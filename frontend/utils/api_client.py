@@ -57,15 +57,13 @@ class APIClient:
                 self.user_info = data.get("user", {"email": email})
             return data
 
-    def register(self, email: str, password: str, username: str, groq_key: str = "", gemini_key: str = "", deepseek_key: str = "") -> dict:
+    def register(self, email: str, password: str, username: str, openrouter_key: str = "") -> dict:
         with httpx.Client(timeout=15) as client:
             resp = client.post(
                 f"{BASE_URL}/api/auth/register",
                 json={
                     "email": email, "password": password, "username": username,
-                    "groq_api_key": groq_key or None,
-                    "gemini_api_key": gemini_key or None,
-                    "deepseek_api_key": deepseek_key or None
+                    "openrouter_api_key": openrouter_key or None
                 },
             )
             resp.raise_for_status()
@@ -88,23 +86,19 @@ class APIClient:
             resp.raise_for_status()
             return resp.json()
 
-    def update_ai_keys(self, groq_key: str, gemini_key: str, deepseek_key: str) -> dict:
+    def update_ai_keys(self, openrouter_key: str) -> dict:
         with httpx.Client(timeout=15) as client:
             resp = client.post(
                 f"{BASE_URL}/api/auth/update-ai-keys",
                 json={
                     "user_email": self._email(),
-                    "groq_api_key": groq_key or None,
-                    "gemini_api_key": gemini_key or None,
-                    "deepseek_api_key": deepseek_key or None
+                    "openrouter_api_key": openrouter_key or None,
                 },
             )
             resp.raise_for_status()
             # Update local cache
             if self.user_info:
-                self.user_info["groq_api_key"] = groq_key or None
-                self.user_info["gemini_api_key"] = gemini_key or None
-                self.user_info["deepseek_api_key"] = deepseek_key or None
+                self.user_info["openrouter_api_key"] = openrouter_key or None
             return resp.json()
 
     # ─── 2FA & Backup Codes ──────────────────────────────────────

@@ -1,8 +1,8 @@
 # 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi
 
-**Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten **akıllı bir bilgi madenciliği istasyonudur.**
+**Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş **OpenRouter** yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten, tamamen **ücretsiz modeller üzerine inşa edilmiş akıllı bir bilgi madenciliği istasyonudur.**
 
-![Nova Nexus Logo](https://img.shields.io/badge/Nova_Nexus-v1.0-blueviolet?style=for-the-badge&logo=rocket)
+![Nova Nexus Logo](https://img.shields.io/badge/Nova_Nexus-v2.0-blueviolet?style=for-the-badge&logo=rocket)
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge&logo=fastapi)
 ![Flet](https://img.shields.io/badge/Flet-UI-orange?style=for-the-badge&logo=dart)
@@ -12,176 +12,96 @@
 > [!CAUTION]
 > ### ⚠️ KRİTİK UYARI / DISCLAIMER (ÖNEMLİ)
 > 
-> **🧪 Deney Aşamasında (Alpha/Demo):** Bu sistem henüz gelişiminin erken bir aşamasındadır. Elde edilen veriler, analizler ve raporlar **%100 doğruluk garantisi vermez.** İş kritik kararlarınızda tek kaynak olarak kullanmayınız.
+> **🧪 Erken Test Aşamasında (Alpha/Beta):** Bu sistem aktif geliştirme ve test aşamasındadır. Kapsamlı bir "Hata (Bug)" barındırma ihtimali yüksektir. Sistem, zaman zaman beklemeyen çökmeler yaşayabilir.
+>
+> **🌍 Dil Desteği Sınırlaması:** Sistem altyapı olarak **12 dil desteğine** (Promptlar, yerelleştirmeler ve çeviriler) sahip olmakla birlikte, aktif olarak sadece **Türkçe ve İngilizce** dillerinde detaylıca test edilmiştir. Diğer dillerde kullanırken ekstra hatalar veya dil kaymaları gözlemleyebilirsiniz.
 > 
-> **🧠 Halüsinasyon Riski:** Yapay zeka ajanları, nadiren de olsa veriler arasında yanlış bağlantılar kurabilir veya "Halüsinasyon" (gerçek dışı bilgi üretimi) yaşayabilir. Sentinel AI doğrulama sistemimiz bu riski minimize etse de, sunulan bilgileri her zaman manuel olarak kontrol etmeniz **hayati önem taşır.**
+> **🧠 Halüsinasyon Riski:** Yapay zeka ajanları, nadiren de olsa veriler arasında yanlış bağlantılar kurabilir veya "Halüsinasyon" (gerçek dışı bilgi üretimi) yaşayabilir. **Sentinel AI** doğrulama sistemimiz bu riski minimize etse de, rapor edilen bilgileri kritik işlerinizde her zaman manuel olarak çapraz kontrolden geçirmeniz **hayati önem taşır.**
 > 
-> **⚖️ Sorumluluk Sınırı:** Bu yazılımın kullanımı sırasında oluşabilecek herhangi bir veri kaybı, maddi/manevi zarar veya yanlış bilgilendirme süreçlerinden **Geliştirici (Abdurahman)** sorumlu tutulamaz. Yazılım "olduğu gibi" (As-Is) sunulmaktadır.
+> **⚖️ Sorumluluk Sınırı:** Bu yazılımın kullanımı sırasında oluşabilecek herhangi bir veri kaybı, API kotası tüketimi, maddi/manevi zarar veya üretilen yalan bilgilerin kullanımından **Geliştirici sorumlu tutulamaz**. Yazılım ticari bir ürün olmayıp "olduğu gibi" (As-Is) sunulmaktadır.
 
 ---
 
-## 🏗️ Sistem Mimarisi ve Karar Mekanizması
+## 🏗️ Sistem Mimarisi ve Tek API Stratejisi
 
-Aşağıdaki şema, sistemin çok katmanlı yapısını ve bir sorgunun "Ham Veri"den "Doğrulanmış Rapor"a dönüşüm sürecini profesyonel bir hiyerarşiyle göstermektedir:
+Nova Nexus v2 ile birlikte parçalı altyapılar (Groq, Gemini, DeepSeek vb.) terk edilmiş ve tamamen **OpenRouter** merkezli bir "Hiyerarşik Yedekleme (Fallback)" sistemine geçilmiştir:
 
-```mermaid
-graph TB
-    %% --- Sinif Tanimlari ---
-    classDef frontend fill:#1a1a2e,stroke:#0f3460,stroke-width:2px,color:#fff;
-    classDef backend fill:#16213e,stroke:#e94560,stroke-width:2px,color:#fff;
-    classDef ai fill:#0f3460,stroke:#533483,stroke-width:3px,color:#fff;
-    classDef data fill:#1b1b1b,stroke:#444,stroke-dasharray: 5 5,color:#aaa;
-    classDef gold fill:#432818,stroke:#99582a,stroke-width:2px,color:#fff;
-
-    %% --- Giriş ve Seçim ---
-    subgraph "🌐 KULLANICI ARAYÜZÜ (CLIENT)"
-        UI[("🖥️ Flet Neo-Cyber Dashboard")]
-        DEPTH{"🎯 Araştırma Derinliği Seçimi"}
-    end
-
-    %% --- Derinlik Mantığı ---
-    subgraph "⚡ ARAŞTIRMA MODLARI (LOGIC)"
-        SURF["🔹 Yüzeysel (Hızlı)"]
-        MED["🔸 Orta (Dengeli)"]
-        DEEP["💎 Derin (Detaylı)"]
-        ULTRA["🔥 Ultra (Akademik)"]
-    end
-
-    %% --- Beyin ve Arama ---
-    subgraph "🧠 CORE ENGINE"
-        AGENT["🤖 Research Agent (Orchestrator)"]
-        QGEN["🔍 Multi-Query Gen"]
-        SEARCH["📡 Search Engine (DDGS + Jina)"]
-    end
-
-    %% --- Hibrit AI Cluster ---
-    subgraph "🔮 DİNAMİK AI YÖNLENDİRİCİ (SMART ROUTER)"
-        ROUTE{"🧭 Yük Dengeleyici"}
-        L8B["🦙 Llama 3.1 8B (Filter)"]
-        L70B["⚔️ Llama 3.3 70B (Synthesis)"]
-        GEM["♊ Gemini 1.5 Flash (Big Context)"]
-        DSEEK["🧬 DeepSeek Reasoner"]
-    end
-
-    %% --- İşleme Akışı ---
-    UI --> DEPTH
-    DEPTH -->|Yüzeysel: 5 Kaynak| SURF
-    DEPTH -->|Orta: 15 Kaynak| MED
-    DEPTH -->|Derin: 30 Kaynak| DEEP
-    DEPTH -->|Ultra: 50 Kaynak| ULTRA
-
-    SURF & MED & DEEP & ULTRA --> AGENT
-    AGENT --> QGEN
-    QGEN --> SEARCH
-    SEARCH --> ROUTE
-
-    ROUTE -->|Sorgu Filtreleme| L8B
-    ROUTE -->|Bağlam < 25K Char| L70B
-    ROUTE -->|Bağlam > 25K Char| GEM
-    ROUTE -->|Zorlu Mantık Hatası| DSEEK
-
-    L8B & L70B & GEM & DSEEK --> VAL[("🛡️ Sentinel AI Validator")]
-    VAL --> FINAL[("📊 Final Premium Rapor")]
-    FINAL -.->|WebSocket| UI
-
-    %% --- Atamalar ---
-    class UI,DEPTH frontend;
-    class SURF,MED,DEEP,ULTRA gold;
-    class AGENT,QGEN,SEARCH backend;
-    class ROUTE,L8B,L70B,GEM,DSEEK ai;
-```
+1. **Filtreleme Ajanı (`liquid/lfm`)**: Gelen web verilerini ışık hızında okur ve alakasız olanları eler.
+2. **Birincil Sentez Ajanı (`openai/gpt-oss-120b:free`)**: Ana raporlama işlemlerini gerçekleştiren, deha düzeyindeki 120 Milyar parametrelik beyindir.
+3. **Yedek Zeka (Fallback) Ajanları**: Ana model yoğunluktan dolayı kota verirse veya yorulursa, sistem beklemeksizin `minimax-m2.5`, `dolphin-mistral` ve son çare olarak `nemotron` modellerine zıplayarak raporun yarıda kalmasını önler.
 
 ---
 
-## 🌡️ Araştırma Derinliği Seviyeleri
+## 🚀 Kurulum Rehberi (Adım Adım)
 
-Nova Nexus Search, ihtiyacınıza göre 4 farklı katmanda araştırma yürütebilir. Her katman, harcanan token ve taranan kaynak sayısına göre optimize edilmiştir:
+Projenin kendi bilgisayarınızda (Özel Server) ayağa kaldırılması oldukça basittir. 
 
-| Mod | Kaynak Sayısı | AI Analiz Gücü | Kullanım Amacı | Hız |
-| :--- | :---: | :--- | :--- | :---: |
-| **🔹 Yüzeysel** | 5 | Llama 8B | Hızlı cevaplar, kısa tanımlar. | ⚡ Şimşek |
-| **🔸 Orta** | 15 | Llama 70B | Genel konu araştırması, ödev hazırlığı. | 🏃 Hızlı |
-| **💎 Derin** | 30 | Hybrid (70B & Gemini) | Teknik analiz, detaylı pazar araştırması. | 🧘 Sabırlı |
-| **🔥 Ultra** | 50+ | Gemini & DeepSeek | Akademik makale, karşılaştırmalı tez çalışması. | 🐢 Kapsamlı |
+### 1. Gereksinimleri Hazırlama
+Bilgisayarınızda **Python 3.12** veya üstü yüklü olmalıdır.
 
----
-
-## ⚡ Akıllı Hibrit Yönlendirme Özelliği
-
-Sistemimiz, tek bir modele bağlı kalmaz. Girdiğiniz verinin boyutuna göre saniyeler içinde karar verir:
-*   **Küçük Veri (< 25.000 Karakter):** Dünyanın en iyi denge modeli olan **Llama 3.3 70B**'yi (Groq) kullanır. Hatasız sentez yapar.
-*   **Devasa Veri (> 25.000 Karakter):** Llama'nın limitlerini aştığımızda, 1 milyon token hafızalı **Gemini 1.5 Flash** bayrağı devralır. Hiçbir detayı atlamaz.
-*   **Karmaşık Sorunlar:** Eğer prompt "Düşünme/Muhakeme" gerektiriyorsa **DeepSeek Reasoner** (Thinking Mode) devreye girerek adım adım mantık yürütür.
-
----
-
-## 🛠️ Teknik Yetenekler (Packages & Core)
-
-| Bileşen | Teknoloji | Fonksiyonu |
-| :--- | :---: | :--- |
-| **Backend** | `FastAPI` | Asenkron, yüksek hızda WebSocket ve REST API. |
-| **Frontend** | `Flet (Flutter)` | Neon-Cyberpunk temalı, premium masaüstü/web GUI. |
-| **Arama** | `DDGS / ddgs` | Reklam engellemeli, sansürsüz DuckDuckGo araması. |
-| **Okuyucu** | `Jina Reader` | Web sayfalarını %95 doğrulukla saf metne dönüştürür. |
-| **Logging** | `Loguru` | Gerçek zamanlı terminal takibi ve hata yönetimi. |
-| **DB** | `SQLite / Alchemy` | Kullanıcı API anahtarları ve araştırma geçmişi arşivi. |
-
----
-
-## 🚀 Kurulum Rehberi
-
-### 1. Hazırlık
-Python 3.12+ kurulu olmalıdır.
 ```bash
+# Projeyi cihazınıza çekin
 git clone https://github.com/nihai/nova-nexus-search.git
 cd nova-nexus-search
 ```
 
-### 2. Ortamı Kurma (Windows)
+### 2. Sanal Ortam (Virtual Environment) Kurulumu
+Çakışmaları önlemek için projeyi kendi izole ortamında kurmanızı tavsiye ederiz.
+
 ```bash
-# Sanal ortam oluşturun
+# Windows
 python -m venv proje
 proje\Scripts\activate
 
-# Bağımlılıkları yükleyin (Ultra Hızlı)
-pip install -r requirements.txt
-pip install ddgs -U
+# Linux / MacOS
+python3 -m venv proje
+source proje/bin/activate
 ```
 
-### 3. Yapılandırma (Çevresel Değişkenler)
-Projenin ana dizininde bir `.env` dosyası oluşturun ve aşağıdaki şablonu kullanın. Bu anahtarlar, kullanıcılar kendininkini girmedikçe sistemin varsayılanı olarak kullanılacaktır.
+### 3. Paketleri Yükleme
+```bash
+# Gerekli tüm kütüphaneleri (FastAPI, Flet, OpenRouter SDK, PDF oluşturucular) yükleyin
+pip install -r requirements.txt
+
+# (Opsiyonel) PDF çıktısı alırken hatalarla karşılaşırsanız kütüphaneyi tazeleyin:
+pip install xhtml2pdf -U
+```
+
+### 4. Yapılandırma (\`.env\` Ayarları)
+Veritabanı ve AI Anahtarı tanımlaması. Proje dizininde (ana klasörde) `.env` adında bir dosya oluşturun veya var olanı düzenleyin:
 
 ```env
-# 🌌 Nova Nexus Search - Örnek Yapılandırma
-# Bu dosyayı .env olarak kopyalayın ve kendi anahtarlarınızı girin
+# SADECE BU ANAHTAR YETERLİDİR (https://openrouter.ai/)
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxx
 
-# 1. Groq API (Llama modelleri için - https://console.groq.com)
-GROQ_API_KEY=gsk_xxxxxxxxxxxx
-
-# 2. Google Gemini API (Büyük context analizi için - https://aistudio.google.com)
-GEMINI_API_KEY=AIzaSy_xxxxxxxxxxxx
-
-# 3. DeepSeek API (Reasoner model için - https://platform.deepseek.com)
-DEEPSEEK_API_KEY=sk-xxxxxxxxxxxx
-
-# 4. JWT Güvenlik Anahtarı (Rastgele ve karmaşık bir değer girin)
-# Terminalde şu komutla profesyonel bir anahtar üretebilirsin:
-# python -c "import secrets; print(secrets.token_urlsafe(32))"
-SECRET_KEY=supersecretkeychangeit_nova_nexus_2025
+# Uygulama Güvenlik Tokeni (Rastgele harf-rakam yazabilirsiniz)
+SECRET_KEY=nova_super_secret_key_1234
 ```
 
-### 4. Başlatma
+---
+
+## 💻 Çalıştırma ve Kullanım
+
+### Başlatma
+Her şey kurulduğunda uygulamayı (Backend ve Flet UI) tek bir merkezi komutla başlatabilirsiniz:
 ```bash
 python start.py
 ```
+> Ekranda önce *Backend Uvicorn* başlatılacak, ardından büyüleyici bir Neo-Cyberpunk ekran (MacOS/Win11 cam efekti) açılacaktır.
+
+### İlk Kullanım
+1. Açılan pencerede **"Hesap Oluştur"** kısmına gelin.
+2. Basit bir e-posta, Kullanıcı Adı ve Şifre bilgisi girin. Yeni mimari kapsamında, OpenRouter API kutucuğu kayıt ekranından istendiği takdirde doldurulabilir veya daha sonra arayüz üzerinden işlenebilir.
+3. Kayıt olduktan sonra, "Ayarlar" panelinden kendi profilinize has API anahtarlarınızı da güncelleyebilirsiniz.
 
 ---
 
 ## 🛡️ Sentinel AI Doğrulama Sistemi
-Oluşturulan her rapor, **Sentinel AI** adını verdiğimiz bir çapraz kontrol mekanizmasından geçer. Bu modül:
-- Yazılan bilgilerin kaynaklarla çelişip çelişmediğini denetler.
-- "Halüsinasyon" (AI uydurması) riskini analiz eder.
-- Rapora 1-10 arası bir **Güvenilirlik Skoru** atayarak sizi yanıltıcı bilgilerden korur.
+
+Oluşturulan her rapor, ek olarak **Sentinel AI** adını verdiğimiz bir çapraz kontrol mekanizmasından geçer. Bu modül:
+- Yazılan bilgilerin kaynaklarla çelişip çelişmediğini denetler. Makalelerin linkini size [Kaynak 1] formatıyla referans gösterir.
+- "Halüsinasyon" riskini analiz eder ve size rapora ne kadar güvenebileceğinizi söyler (Örn: 9/10).
+- Tüm verileri isteğinize göre (MD, HTML, PDF, JSON) derleyerek indirebilmenizi sağlar.
 
 ---
-*Nova Nexus Search - Bilginin Sınırlarını Keşfedin.*
+*Nova Nexus Search - Bilginin Gürültüsünden Arınmış Saf Gerçekliğe.*

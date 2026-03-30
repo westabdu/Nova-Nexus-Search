@@ -17,7 +17,7 @@ def _check_schema_and_reset():
                         "last_login", "password_changed_at",
                         "backup_codes", "token_version",
                         "api_key_last_used", "is_admin",
-                        "groq_api_key", "gemini_api_key", "deepseek_api_key"}
+                        "openrouter_api_key"}
     if not os.path.exists(sqlite_file_name):
         return  # DB yok, create_db_and_tables halleder
     try:

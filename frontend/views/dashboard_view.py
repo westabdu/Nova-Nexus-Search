@@ -112,7 +112,8 @@ def build_dashboard_view(page: ft.Page, api_client, current_lang_ref: list, on_l
         ], spacing=12)
     )
 
-    download_row = ft.Row(visible=False, wrap=True)
+    download_row = ft.Row(visible=False, wrap=True, spacing=8)
+    stats_bar = ft.Text("", size=12, color=th.text_dim, italic=True)
     def bind_download_buttons(files_dict):
         download_row.controls = [ft.Text("Dışa Aktar:", size=13, weight=ft.FontWeight.W_600, color=th.text_main)]
         for fmt, link in files_dict.items():
@@ -137,6 +138,7 @@ def build_dashboard_view(page: ft.Page, api_client, current_lang_ref: list, on_l
             ft.Container(expand=True),
             download_row
         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+        stats_bar,
         ft.Container(height=16),
         ft.Row([
             ft.Container(expand=5, content=report_content_container),
@@ -163,23 +165,93 @@ def build_dashboard_view(page: ft.Page, api_client, current_lang_ref: list, on_l
     def show_report(data):
         report_panel.visible = True
         synthesis_md.value = data.get("synthesis", "Sentez verisi bulunamadı.")
+
+        # — Kaynak istatistikleri —
+        total_src    = data.get("source_count", 0)
+        reliable_src = data.get("reliable_source_count", 0)
+        academic_cnt = data.get("academic_count", 0)
+        crawler_cnt  = data.get("crawler_count", 0)
+
         src_list.controls.clear()
+
+        # Kaynak kaynak tipi renk ve ikon haritası
+        source_meta = {
+            "arxiv":           ("📄", "#7c3aed", "arXiv"),
+            "semantic_scholar":("🔬", "#0ea5e9", "Semantic Scholar"),
+            "pubmed":          ("🏥", "#10b981", "PubMed"),
+            "crossref":        ("📚", "#f59e0b", "CrossRef"),
+            "deep_crawler":    ("🕷️", "#ef4444", "DeepCrawler"),
+            "jina":            ("🌐", th.accent, "Web"),
+            "bs4":             ("🌐", th.accent, "Web"),
+        }
+
         for doc in data.get("documents", []):
+            src_key  = doc.get("source", "web")
+            ic, clr, lbl = source_meta.get(src_key, ("🌐", th.accent, "Web"))
+            authority = doc.get("authority", 0)
+            rel_score = doc.get("relevance_score", 0) or doc.get("citation_count", 0)
+            year      = doc.get("year", "")
+            authors   = ", ".join(doc.get("authors", [])[:2]) if doc.get("authors") else ""
+
             src_list.controls.append(ft.Container(
-                padding=10, bgcolor="#10ffffff", border_radius=8, border=ft.border.all(1, "#20ffffff"),
+                padding=ft.padding.symmetric(horizontal=12, vertical=10),
+                bgcolor="#0dffffff" if th.is_dark else "#f4f4f8",
+                border_radius=12,
+                border=ft.border.all(1.5, clr + "60"),
+                ink=True,
+                on_click=lambda e, u=doc.get("url", ""): page.launch_url(u) if u else None,
                 content=ft.Column([
-                    ft.Text(doc.get("title",""), size=13, weight=ft.FontWeight.W_600, color=th.text_main, max_lines=2, overflow=ft.TextOverflow.ELLIPSIS),
-                    ft.Text(doc.get("url",""), size=11, color=th.accent, max_lines=1, overflow=ft.TextOverflow.ELLIPSIS),
-                    ft.Text(f"Skor: {doc.get('relevance_score','?')}/10", size=10, color=th.success)
-                ], spacing=2),
-                on_click=lambda e, u=doc.get("url",""): page.launch_url(u), ink=True
+                    ft.Row([
+                        ft.Container(
+                            content=ft.Text(f"{ic} {lbl}", size=10, weight=ft.FontWeight.BOLD, color=clr),
+                            bgcolor=clr + "22", border_radius=6,
+                            padding=ft.padding.symmetric(horizontal=8, vertical=3)
+                        ),
+                        ft.Container(expand=True),
+                        ft.Text(f"Otorite: {authority}/10", size=10,
+                                color=th.success if authority >= 8 else (th.warning if authority >= 5 else th.text_muted),
+                                weight=ft.FontWeight.W_700),
+                    ]),
+                    ft.Text(doc.get("title", ""), size=13, weight=ft.FontWeight.W_700,
+                            color=th.text_main, max_lines=2, overflow=ft.TextOverflow.ELLIPSIS),
+                    *([ft.Text(authors, size=11, color=th.text_dim, italic=True, max_lines=1)] if authors else []),
+                    ft.Row([
+                        ft.Text(doc.get("url", "")[:60] + "...", size=10, color=clr,
+                                max_lines=1, overflow=ft.TextOverflow.ELLIPSIS, expand=True),
+                        *([ft.Text(str(year), size=10, color=th.text_muted)] if year else []),
+                        *([ft.Text(f"⭐ {rel_score}", size=10, color=th.warning)] if rel_score else []),
+                    ], spacing=8)
+                ], spacing=4)
             ))
+
+        # — Doğrulama Güncelle —
         val = data.get("validation", {})
-        sc = val.get("reliability_score", 0)
-        val_score.value = f"{sc}/10"
-        val_score.color = th.success if sc >= 7 else (th.warning if sc >= 4 else th.error)
-        val_status.value = "Yüksek Güvenilirlik" if sc >= 7 else ("Orta" if sc >= 4 else "Düşük")
-        val_reason.value = str(val.get("verdict", ""))
+        sc  = val.get("reliability_score", 0)
+        val_score.value  = f"{sc}/10"
+        val_score.color  = th.success if sc >= 7 else (th.warning if sc >= 4 else th.error)
+        val_status.value = "Yüksek Güvenilirlik" if sc >= 7 else ("Orta Güvenilirlik" if sc >= 4 else "Düşük Güvenilirlik")
+
+        # Akademik destek etiketi
+        academic_backing = val.get("academic_backing", "")
+        academic_label   = {"strong": "✅ Güçlü Akademik Destek", "moderate": "⚡ Orta Akademik Destek", "weak": "⚠️ Zayıf Akademik Destek"}.get(academic_backing, "")
+
+        val_reason.value = (
+            f"{val.get('verdict', '')}\n\n"
+            f"{'  ' + academic_label if academic_label else ''}"
+        ).strip()
+
+        # — Kaynak Özet İstatistiği (bağımsız stats_bar'a yaz) —
+        stats_parts = [f"📊 Toplam: {total_src} kaynak", f"✅ Nitelikli: {reliable_src}"]
+        if academic_cnt:
+            stats_parts.append(f"🎓 Akademik: {academic_cnt}")
+        if crawler_cnt:
+            stats_parts.append(f"🕷️ DeepCrawler: {crawler_cnt}")
+        hallucination = val.get('hallucination_risk', '')
+        if hallucination:
+            risk_emoji = {"low": "🟢", "medium": "🟡", "high": "🔴"}.get(hallucination, "⚪")
+            stats_parts.append(f"{risk_emoji} Halüsinasyon Riski: {hallucination.upper()}")
+        stats_bar.value = "   |   ".join(stats_parts)
+
         page.update()
 
     async def start_search():
@@ -211,9 +283,7 @@ def build_dashboard_view(page: ft.Page, api_client, current_lang_ref: list, on_l
                 "query": q, "depth": depth_dd.value, "time_filter": time_dd.value,
                 "domain_filter": domain_dd.value, "max_sources": int(max_src_dd.value),
                 "language": out_lang_dd.value, "formats": fmts, "user_email": user_email,
-                "groq_api_key": api_client.user_info.get("groq_api_key", "") if api_client.user_info else "",
-                "gemini_api_key": api_client.user_info.get("gemini_api_key", "") if api_client.user_info else "",
-                "deepseek_api_key": api_client.user_info.get("deepseek_api_key", "") if api_client.user_info else "",
+                "openrouter_api_key": api_client.user_info.get("openrouter_api_key", "") if api_client.user_info else "",
             }
             await ws.send(json.dumps(req))
             while True:
@@ -229,7 +299,8 @@ def build_dashboard_view(page: ft.Page, api_client, current_lang_ref: list, on_l
                     else:
                         add_log("🎉 Araştırma tamamlandı!")
                         show_report(res)
-                        bind_download_buttons(files)
+                        if files:
+                            bind_download_buttons(files)
                     break
                 elif tt == "error":
                     add_log(f"❌ Sunucu Hatası: {pkt.get('message')}"); break

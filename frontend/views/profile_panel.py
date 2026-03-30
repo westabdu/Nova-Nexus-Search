@@ -73,14 +73,12 @@ def build_profile_panel(page: ft.Page, api_client, lang: str) -> ft.Container:
         page.update()
 
     # ─── Diğer AI Modelleri için API Key ─────────────────────────────────────────
-    groq_f = ft.TextField(value=info.get("groq_api_key", "") or "", hint_text="Groq API Key (İsteğe Bağlı)", password=True, can_reveal_password=True, text_size=12, height=40, bgcolor="#10ffffff" if th.is_dark else "#0a000000", border_color=th.border)
-    gemini_f = ft.TextField(value=info.get("gemini_api_key", "") or "", hint_text="Gemini API Key (İsteğe Bağlı)", password=True, can_reveal_password=True, text_size=12, height=40, bgcolor="#10ffffff" if th.is_dark else "#0a000000", border_color=th.border)
-    deepseek_f = ft.TextField(value=info.get("deepseek_api_key", "") or "", hint_text="DeepSeek API Key (İsteğe Bağlı)", password=True, can_reveal_password=True, text_size=12, height=40, bgcolor="#10ffffff" if th.is_dark else "#0a000000", border_color=th.border)
+    openrouter_f = ft.TextField(value=info.get("openrouter_api_key", "") or "", hint_text="OpenRouter API Key (İsteğe Bağlı)", password=True, can_reveal_password=True, text_size=12, height=40, bgcolor="#10ffffff" if th.is_dark else "#0a000000", border_color=th.border)
     ai_msg = ft.Text("", size=10)
 
     def handle_save_ai(e):
         try:
-            api_client.update_ai_keys(groq_f.value.strip(), gemini_f.value.strip(), deepseek_f.value.strip())
+            api_client.update_ai_keys(openrouter_f.value.strip())
             ai_msg.value = "✓ Kaydedildi!"
             ai_msg.color = th.success
         except Exception:
@@ -94,8 +92,8 @@ def build_profile_panel(page: ft.Page, api_client, lang: str) -> ft.Container:
             ft.Icon(ft.icons.SMART_TOY, size=14, color=th.text_dim),
             ft.Text("Kişisel AI Api Anahtarları", size=12, color=th.text_dim, weight=ft.FontWeight.W_600),
         ]),
-        groq_f, gemini_f, deepseek_f,
-        ft.ElevatedButton("Anahtarları Kaydet", bgcolor=th.success, color="#fff", height=32, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)), on_click=handle_save_ai),
+        openrouter_f,
+        ft.ElevatedButton(content=ft.Text("Anahtarları Kaydet", color="#fff"), bgcolor=th.success, height=32, style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=8)), on_click=handle_save_ai),
         ai_msg
     ], spacing=8, visible=False)
 

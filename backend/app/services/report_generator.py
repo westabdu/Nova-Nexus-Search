@@ -215,13 +215,20 @@ class ReportGenerator:
 
         if "pdf" in formats:
             try:
-                import pdfkit
+                from xhtml2pdf import pisa
                 html_content = self.generate_html(research_result)
                 pdf_path = REPORTS_DIR / f"{base_name}.pdf"
-                pdfkit.from_string(html_content, str(pdf_path))
-                saved["pdf"] = str(pdf_path)
+                
+                with open(str(pdf_path), "w+b") as result_file:
+                    pisa_status = pisa.CreatePDF(html_content, dest=result_file)
+                
+                if pisa_status.err:
+                    logger.warning(f"PDF generation encountered errors: {pisa_status.err}")
+                    saved["pdf"] = None
+                else:
+                    saved["pdf"] = str(pdf_path)
             except Exception as e:
-                logger.warning(f"PDF generation failed (pdfkit may not be configured): {e}")
+                logger.warning(f"PDF generation failed: {e}")
                 saved["pdf"] = None
 
         return saved

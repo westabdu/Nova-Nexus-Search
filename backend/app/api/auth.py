@@ -1,7 +1,7 @@
 """
-Auth API — Kayıt, Giriş, 2FA+Backup, Oturum Yönetimi, API Key, Şifre Değiştirme
+Auth API — Kayıt, Giriş, 2FA+Backup, Oturum Yönetimi, API Key, Şifre Değiştirme, E-posta ile Şifre Sıfırlama (6 Haneli Kod)
 """
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from datetime import datetime, timedelta
@@ -19,7 +19,9 @@ from backend.app.core.security import (
     generate_backup_codes, verify_backup_code,
 )
 from backend.app.core.config import settings
-import secrets, pyotp, qrcode, io, base64, json, logging
+import secrets, pyotp, qrcode, io, base64, json, logging, smtplib, random
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 logger = logging.getLogger(__name__)
 
@@ -102,11 +104,55 @@ def _build_token_response(user: User, session: Session, request: Request = None)
             "id": user.id, "email": user.email, "username": user.username,
             "api_key": user.api_key, "totp_enabled": user.totp_enabled,
             "quota_remaining": user.quota_remaining, "is_admin": user.is_admin,
-            "groq_api_key": user.groq_api_key,
-            "gemini_api_key": user.gemini_api_key,
-            "deepseek_api_key": user.deepseek_api_key,
+            "openrouter_api_key": user.openrouter_api_key,
         },
     }
+
+
+def send_reset_email_smtp(to_email: str, code: str) -> bool:
+    """SMTP (Gmail) ile şifre sıfırlama e-postası gönder (6 haneli kod)"""
+    
+    subject = "Nova Nexus Search - Şifre Sıfırlama"
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="UTF-8"></head>
+    <body style="font-family: Arial, sans-serif; background: #0A0A0F; padding: 40px;">
+        <div style="max-width: 500px; margin: 0 auto; background: #1A1A2E; border-radius: 16px; padding: 30px; border: 1px solid #00F0FF;">
+            <h1 style="color: #00F0FF; text-align: center;">🔐 Nova Nexus</h1>
+            <h2 style="color: #FFFFFF; text-align: center;">Şifre Sıfırlama Talebi</h2>
+            <p style="color: #A0A0B0;">Merhaba,</p>
+            <p style="color: #A0A0B0;">Şifre sıfırlama talebinde bulundunuz. Aşağıdaki 6 haneli kodu kullanarak yeni şifre belirleyebilirsiniz:</p>
+            <div style="background: #0A0A0F; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+                <code style="color: #00F0FF; font-size: 28px; font-weight: bold; letter-spacing: 4px;">{code}</code>
+            </div>
+            <p style="color: #A0A0B0; font-size: 12px;">Bu kod <strong>15 dakika</strong> geçerlidir.</p>
+            <p style="color: #A0A0B0;">Eğer bu talebi siz yapmadıysanız, bu e-postayı dikkate almayın.</p>
+            <hr style="border-color: #2A2A38;">
+            <p style="color: #A0A0B0; font-size: 11px; text-align: center;">Nova Nexus Search - Bilginin Sınırlarını Keşfedin</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    msg = MIMEMultipart("alternative")
+    msg["From"] = settings.SMTP_FROM_EMAIL
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(html_content, "html"))
+    
+    try:
+        server = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
+        server.starttls()
+        server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        logger.info(f"✅ SMTP ile e-posta gönderildi: {to_email} -> Kod: {code}")
+        return True
+    except Exception as e:
+        logger.error(f"❌ SMTP e-posta hatası: {e}")
+        return False
 
 
 # ══════════════════════════════════════════════════════════════
@@ -132,9 +178,8 @@ def register_user(user: UserCreate, session: Session = Depends(get_session)):
         backup_codes=None, failed_login_attempts=0, locked_until=None,
         last_login=None, password_changed_at=datetime.utcnow(),
         token_version=0, is_admin=False,
-        groq_api_key=user.groq_api_key,
-        gemini_api_key=user.gemini_api_key,
-        deepseek_api_key=user.deepseek_api_key,
+        openrouter_api_key=user.openrouter_api_key,
+        reset_code=None, reset_code_expires=None,
     )
     session.add(db_user)
     session.commit()
@@ -418,17 +463,13 @@ def revoke_api_key(user_email: str, session: Session = Depends(get_session)):
 
 class AIKeyUpdate(BaseModel):
     user_email: str
-    groq_api_key: Optional[str] = None
-    gemini_api_key: Optional[str] = None
-    deepseek_api_key: Optional[str] = None
+    openrouter_api_key: Optional[str] = None
 
 @router.post("/update-ai-keys")
 def update_ai_keys(keys: AIKeyUpdate, session: Session = Depends(get_session)):
     user = session.exec(select(User).where(User.email == keys.user_email)).first()
     if not user: raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
-    user.groq_api_key = keys.groq_api_key
-    user.gemini_api_key = keys.gemini_api_key
-    user.deepseek_api_key = keys.deepseek_api_key
+    user.openrouter_api_key = keys.openrouter_api_key
     session.add(user)
     session.commit()
     return {"message": "AI API Anahtarları güncellendi."}
@@ -492,54 +533,75 @@ def update_history_tags(history_id: int, tags: str, session: Session = Depends(g
     return {"message": "Etiketler güncellendi", "tags": record.tags}
 
 
+# ══════════════════════════════════════════════════════════════
+#  ŞİFRE SIFIRLAMA (6 Haneli Kod ile)
+# ══════════════════════════════════════════════════════════════
+
 @router.post("/forgot-password")
 def forgot_password(email: str, session: Session = Depends(get_session)):
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
-        # Avoid user enumeration by acting like it succeeded
         return {"message": "Eğer e-posta sistemde kayıtlıysa, şifre sıfırlama kodu gönderdik."}
     
-    # Generate 15-min reset token
-    expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode = {"sub": user.email, "type": "reset", "exp": expire}
-    from jose import jwt
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    # 6 haneli rastgele kod üret (100000 - 999999)
+    reset_code = str(random.randint(100000, 999999))
     
-    # Fake SMTP send
-    logger.info(f"📧 Şifre Sıfırlama Gönderildi -> {user.email}")
-    logger.info(f"🔗 Kurtarma Kodu (TOKEN): {encoded_jwt}")
+    # Kodu veritabanında sakla (15 dakika geçerli)
+    user.reset_code = reset_code
+    user.reset_code_expires = datetime.utcnow() + timedelta(minutes=15)
+    session.add(user)
+    session.commit()
     
-    return {"message": "Eğer e-posta sistemde kayıtlıysa, şifre sıfırlama kodu gönderdik."}
+    # SMTP ile e-posta gönder
+    success = send_reset_email_smtp(user.email, reset_code)
+    
+    if success:
+        logger.info(f"📧 Şifre sıfırlama kodu gönderildi: {user.email} -> {reset_code}")
+        return {"message": "Şifre sıfırlama kodu e-posta adresinize gönderildi. Lütfen spam klasörünü de kontrol edin."}
+    else:
+        logger.error(f"❌ E-posta gönderilemedi: {user.email}")
+        return {"message": "E-posta gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin."}
 
-
-from backend.app.core.security import get_password_hash
 
 @router.post("/reset-password")
-def reset_password(token: str, new_password: str, session: Session = Depends(get_session)):
-    from jose import jwt
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        if payload.get("type") != "reset":
-            raise HTTPException(status_code=400, detail="Geçersiz token türü.")
-        email: str = payload.get("sub")
-        if email is None:
-            raise HTTPException(status_code=400, detail="Token geçersiz.")
-    except jwt.JWTError:
-        raise HTTPException(status_code=400, detail="Şifre sıfırlama süresi dolmuş veya kod hatalı.")
-    
+def reset_password(
+    email: str = Form(...),
+    code: str = Form(...),
+    new_password: str = Form(...),
+    session: Session = Depends(get_session)
+):
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
         raise HTTPException(status_code=404, detail="Kullanıcı bulunamadı.")
-        
-    user.hashed_password = get_password_hash(new_password)
-    user.token_version += 1  # Invalidate all current sessions
     
-    # Close all sessions in DB
-    active_sessions = session.exec(select(UserSession).where(UserSession.user_id == user.id, UserSession.is_revoked == False)).all()
+    # Kodu kontrol et
+    if user.reset_code != code:
+        raise HTTPException(status_code=400, detail="Geçersiz veya hatalı kod.")
+    
+    if user.reset_code_expires < datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Kodun süresi dolmuş. Lütfen yeni kod isteyin.")
+    
+    # Şifre gücünü kontrol et
+    strength = validate_password(new_password)
+    if not strength.is_valid:
+        raise HTTPException(status_code=400, detail="Yeni şifre zayıf: " + " | ".join(strength.feedback))
+    
+    # Şifreyi güncelle
+    user.hashed_password = get_password_hash(new_password)
+    user.token_version += 1
+    user.reset_code = None
+    user.reset_code_expires = None
+    
+    # Tüm aktif oturumları kapat
+    active_sessions = session.exec(select(UserSession).where(
+        UserSession.user_id == user.id,
+        UserSession.is_revoked == False
+    )).all()
     for s in active_sessions:
         s.is_revoked = True
         session.add(s)
-        
+    
     session.add(user)
     session.commit()
+    
     return {"message": "Şifreniz başarıyla sıfırlandı. Lütfen yeni şifrenizle giriş yapın."}
