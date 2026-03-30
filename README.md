@@ -20,7 +20,7 @@
 > 
 > **🧪 Erken Test Aşamasında (Alpha/Beta):** Bu sistem aktif geliştirme ve test aşamasındadır. Kapsamlı bir "Hata (Bug)" barındırma ihtimali yüksektir. Sistem, zaman zaman beklemeyen çökmeler yaşayabilir.
 >
-> **🌍 Dil Desteği Sınırlaması:** Sistem altyapı olarak **12 dil desteğine** (Promptlar, yerelleştirmeler ve çeviriler) sahip olmakla birlikte, aktif olarak sadece **Türkçe ve İngilizce** dillerinde detaylıca test edilmiştir. Diğer dillerde kullanırken ekstra hatalar veya dil kaymaları gözlemleyebilirsiniz NOT: TÜRKÇE DİLİNDE KAYMALAR VE BOZUKLUKLAR VARDIR BİLGİNİZE!!!!.
+> **🌍 Dil Desteği Sınırlaması:** Sistem altyapı olarak **12 dil desteğine** (Promptlar, yerelleştirmeler ve çeviriler) sahip olmakla birlikte, aktif olarak sadece **Türkçe ve İngilizce** dillerinde detaylıca test edilmiştir. Diğer dillerde kullanırken ekstra hatalar veya dil kaymaları gözlemleyebilirsiniz ***NOT: TÜRKÇE DİLİNDE KAYMALAR VE BOZUKLUKLAR VARDIR BİLGİNİZE!!!!***.
 > 
 > **🧠 Halüsinasyon Riski:** Yapay zeka ajanları, nadiren de olsa veriler arasında yanlış bağlantılar kurabilir veya "Halüsinasyon" (gerçek dışı bilgi üretimi) yaşayabilir. **Sentinel AI** doğrulama sistemimiz bu riski minimize etse de, rapor edilen bilgileri kritik işlerinizde her zaman manuel olarak çapraz kontrolden geçirmeniz **hayati önem taşır.**
 
