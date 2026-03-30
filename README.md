@@ -1,11 +1,17 @@
-# 🌌 Nova Nexus Search: Hibrit AI Derin Araştırma Ekosistemi
+# 🌌 Nova Nexus Search: Pro Research Ecosystem
+## *Beyond Search, Into Intelligence.*
 
-**Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş **OpenRouter** yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten, tamamen **ücretsiz modeller üzerine inşa edilmiş akıllı bir bilgi madenciliği istasyonudur.**
+**Nova Nexus Search**, standart bir arama motoru değildir. İnternetin gürültüsünü temizleyen, ham veriyi akademik düzeyde analiz eden ve en gelişmiş **OpenRouter** yapay zeka modellerini bir "Orkestra Şefi" gibi yöneten, tamamen **ücretsiz modeller üzerine inşa edilmiş profesyonel bir bilgi madenciliği istasyonudur.**
 
-![Nova Nexus Logo](https://img.shields.io/badge/Nova_Nexus-v2.0-blueviolet?style=for-the-badge&logo=rocket)
+<div align="center">
+
+![Version](https://img.shields.io/badge/Nova_Nexus-v2.1_Hybrid-blueviolet?style=for-the-badge&logo=rocket)
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge&logo=fastapi)
 ![Flet](https://img.shields.io/badge/Flet-UI-orange?style=for-the-badge&logo=dart)
+![Status](https://img.shields.io/badge/Status-Alpha_Testing-red?style=for-the-badge)
+
+</div>
 
 ---
 
@@ -14,94 +20,130 @@
 > 
 > **🧪 Erken Test Aşamasında (Alpha/Beta):** Bu sistem aktif geliştirme ve test aşamasındadır. Kapsamlı bir "Hata (Bug)" barındırma ihtimali yüksektir. Sistem, zaman zaman beklemeyen çökmeler yaşayabilir.
 >
-> **🌍 Dil Desteği Sınırlaması:** Sistem altyapı olarak **12 dil desteğine** (Promptlar, yerelleştirmeler ve çeviriler) sahip olmakla birlikte, aktif olarak sadece **Türkçe ve İngilizce** dillerinde detaylıca test edilmiştir. Diğer dillerde kullanırken ekstra hatalar veya dil kaymaları gözlemleyebilirsiniz.
+> **🌍 Dil Desteği Sınırlaması:** Sistem altyapı olarak **12 dil desteğine** (Promptlar, yerelleştirmeler ve çeviriler) sahip olmakla birlikte, aktif olarak sadece **Türkçe ve İngilizce** dillerinde detaylıca test edilmiştir. Diğer dillerde kullanırken ekstra hatalar veya dil kaymaları gözlemleyebilirsiniz NOT: TÜRKÇE DİLİNDE KAYMALAR VE BOZUKLUKLAR VARDIR BİLGİNİZE!!!!.
 > 
 > **🧠 Halüsinasyon Riski:** Yapay zeka ajanları, nadiren de olsa veriler arasında yanlış bağlantılar kurabilir veya "Halüsinasyon" (gerçek dışı bilgi üretimi) yaşayabilir. **Sentinel AI** doğrulama sistemimiz bu riski minimize etse de, rapor edilen bilgileri kritik işlerinizde her zaman manuel olarak çapraz kontrolden geçirmeniz **hayati önem taşır.**
-> 
-> **⚖️ Sorumluluk Sınırı:** Bu yazılımın kullanımı sırasında oluşabilecek herhangi bir veri kaybı, API kotası tüketimi, maddi/manevi zarar veya üretilen yalan bilgilerin kullanımından **Geliştirici sorumlu tutulamaz**. Yazılım ticari bir ürün olmayıp "olduğu gibi" (As-Is) sunulmaktadır.
 
 ---
 
-## 🏗️ Sistem Mimarisi ve Tek API Stratejisi
+## 🏗️ Mimari Akış: Bilginin Dönüşümü
 
-Nova Nexus v2 ile birlikte parçalı altyapılar (Groq, Gemini, DeepSeek vb.) terk edilmiş ve tamamen **OpenRouter** merkezli bir "Hiyerarşik Yedekleme (Fallback)" sistemine geçilmiştir:
+Aşağıdaki şemada, bir sorgunun ham internet verisinden rafine bir akademik rapora nasıl dönüştüğü ve **OpenRouter Fallback** sisteminin nasıl çalıştığı gösterilmektedir:
 
-1. **Filtreleme Ajanı (`liquid/lfm`)**: Gelen web verilerini ışık hızında okur ve alakasız olanları eler.
-2. **Birincil Sentez Ajanı (`openai/gpt-oss-120b:free`)**: Ana raporlama işlemlerini gerçekleştiren, deha düzeyindeki 120 Milyar parametrelik beyindir.
-3. **Yedek Zeka (Fallback) Ajanları**: Ana model yoğunluktan dolayı kota verirse veya yorulursa, sistem beklemeksizin `minimax-m2.5`, `dolphin-mistral` ve son çare olarak `nemotron` modellerine zıplayarak raporun yarıda kalmasını önler.
+```mermaid
+graph TD
+    classDef user fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff;
+    classDef agent fill:#16213e,stroke:#00ff9d,stroke-width:2px,color:#fff;
+    classDef tier1 fill:#2d1b4e,stroke:#bf00ff,stroke-width:3px,color:#fff;
+    classDef tier2 fill:#4e1b1b,stroke:#ff003c,stroke-width:2px,color:#fff;
+    classDef output fill:#0a1a0a,stroke:#00ff00,stroke-width:2px,color:#fff;
+
+    Start(("🖥️ Kullanıcı Sorgusu")) --> Input[/"Query & Depth Selection"/]
+    Input --> Orchestrator["🤖 Research Agent (Orchestrator)"]
+    
+    subgraph "🔍 VERİ TOPLAMA KATMANI"
+        Orchestrator --> Search["📡 DDGS Search Engine"]
+        Orchestrator --> Academic["🎓 Academic Search (arXiv/S2)"]
+        Orchestrator --> Crawler["🕷️ Deep Web Crawler"]
+    end
+
+    Search & Academic & Crawler --> Context[("📦 Ham Kaynak Havuzu")]
+    
+    subgraph "🧠 HİYERARŞİK AI MOTORU (OPENROUTER)"
+        Context --> Filter["⚡ Tier 1: Hızlı Filtreleme<br/>(Liquid LFM 1.2B)"]
+        Filter --> Synthesis{"💎 Tier 2: Sentez & Raporlama<br/>(Ana Model: GPT-OSS-120B)"}
+        
+        Synthesis -- "Quota/Error" --> Fallback1["🔄 Fallback A: MiniMax M2.5"]
+        Fallback1 -- "Error" --> Fallback2["🔄 Fallback B: Dolphin Mistral 24B"]
+        Fallback2 -- "Error" --> Fallback3["🔄 Fallback C: NEMOTRON 120B"]
+    end
+
+    Synthesis & Fallback1 & Fallback2 & Fallback3 --> Validator["🛡️ Sentinel AI Validator"]
+    Validator --> Export[/"📊 Rapor Çıktısı (PDF, MD, HTML)"/]
+    Export --> End(("✅ Tamamlandı"))
+
+    class Start,Input user;
+    class Orchestrator,Search,Academic,Crawler,Context agent;
+    class Filter,Synthesis tier1;
+    class Fallback1,Fallback2,Fallback3 tier2;
+    class Validator,Export,End output;
+```
 
 ---
 
-## 🚀 Kurulum Rehberi (Adım Adım)
+## 💎 Temel Özellikler
 
-Projenin kendi bilgisayarınızda (Özel Server) ayağa kaldırılması oldukça basittir. 
+- **🎭 Hibrit Zeka**: OpenRouter üzerindeki en iyi ücretsiz modelleri görev bazlı (Filtreleme, Sentez, Denetleme) kullanır.
+- **🛡️ Sentinel AI**: Üretilen her raporu kaynaklarla karşılaştırarak doğruluk skorunu hesaplar.
+- **🕷️ Deep Crawler**: Sadece meta veriyi değil, Jina Reader ile sayfaların içeriğini tam metin olarak okur.
+- **🎓 Akademik Derinlik**: arXiv ve Semantic Scholar entegrasyonu ile magazin haberlerini bilimsel gerçeklerden ayırır.
+- **📄 Çoklu Format**: Raporlarınızı anında **PDF**, **Markdown**, **HTML** veya **JSON** olarak dışa aktarın.
+- **🎨 Neo-Cyberpunk UI**: MacOS ve Windows 11 estetiğinden ilham alan, cam efekti (Glassmorphism) odaklı modern arayüz.
 
-### 1. Gereksinimleri Hazırlama
-Bilgisayarınızda **Python 3.12** veya üstü yüklü olmalıdır.
+---
+
+## ⚡ AI Model Hiyerarşisi (Tier Strategy)
+
+| Aşama | Birincil Model (Primary) | Yedekler (Fallbacks) | Neden Bu Model? |
+| :--- | :--- | :--- | :--- |
+| **🔍 Filtreleme** | `liquid/lfm-2.5-1.2b:free` | `gpt-oss-120b` | İnanılmaz hız (156 t/s) ve temiz eleme. |
+| **📊 Sentezleme** | `openai/gpt-oss-120b:free` | `minimax-m2.5`, `dolphin-mistral` | 131K Context ve 120B parametre ile derin bilgi. |
+| **🛡️ Doğrulama** | `openai/gpt-oss-120b:free` | `nemotron-a12b` | Kaynaklar arası çelişkileri bulmada rakipsiz. |
+
+---
+
+## 🛠️ Teknik Kurulum (Developer Guide)
+
+### 1️⃣ Ön Hazırlık
+Sistem için **Python 3.12+** ve terminal erişimi gereklidir.
 
 ```bash
-# Projeyi cihazınıza çekin
+# Repo'yu klonlayın
 git clone https://github.com/nihai/nova-nexus-search.git
 cd nova-nexus-search
 ```
 
-### 2. Sanal Ortam (Virtual Environment) Kurulumu
-Çakışmaları önlemek için projeyi kendi izole ortamında kurmanızı tavsiye ederiz.
-
+### 2️⃣ Sanal Ortam Oluşturma
+Bağımlılıkların temiz kalması için sanal ortam şarttır:
 ```bash
-# Windows
 python -m venv proje
+# Windows:
 proje\Scripts\activate
-
-# Linux / MacOS
-python3 -m venv proje
+# Linux/Mac:
 source proje/bin/activate
 ```
 
-### 3. Paketleri Yükleme
+### 3️⃣ Bağımlılık Enjeksiyonu
 ```bash
-# Gerekli tüm kütüphaneleri (FastAPI, Flet, OpenRouter SDK, PDF oluşturucular) yükleyin
 pip install -r requirements.txt
-
-# (Opsiyonel) PDF çıktısı alırken hatalarla karşılaşırsanız kütüphaneyi tazeleyin:
+# PDF motoru için (xhtml2pdf)
 pip install xhtml2pdf -U
 ```
 
-### 4. Yapılandırma (\`.env\` Ayarları)
-Veritabanı ve AI Anahtarı tanımlaması. Proje dizininde (ana klasörde) `.env` adında bir dosya oluşturun veya var olanı düzenleyin:
-
+### 4️⃣ Yapılandırma (\`.env\`)
+Ana dizinde `.env` dosyası oluşturun ve şu değerleri girin:
 ```env
-# SADECE BU ANAHTAR YETERLİDİR (https://openrouter.ai/)
-OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxx
+# OpenRouter API (https://openrouter.ai/)
+OPENROUTER_API_KEY=sk-or-v1-SİZİN_ANAHTARINIZ
 
-# Uygulama Güvenlik Tokeni (Rastgele harf-rakam yazabilirsiniz)
-SECRET_KEY=nova_super_secret_key_1234
+# Güvenlik (JWT Secret)
+SECRET_KEY=nova_nexus_secret_hash_value_99
 ```
 
 ---
 
-## 💻 Çalıştırma ve Kullanım
+## 🖥️ Kullanım Senaryosu
 
-### Başlatma
-Her şey kurulduğunda uygulamayı (Backend ve Flet UI) tek bir merkezi komutla başlatabilirsiniz:
-```bash
-python start.py
-```
-> Ekranda önce *Backend Uvicorn* başlatılacak, ardından büyüleyici bir Neo-Cyberpunk ekran (MacOS/Win11 cam efekti) açılacaktır.
-
-### İlk Kullanım
-1. Açılan pencerede **"Hesap Oluştur"** kısmına gelin.
-2. Basit bir e-posta, Kullanıcı Adı ve Şifre bilgisi girin. Yeni mimari kapsamında, OpenRouter API kutucuğu kayıt ekranından istendiği takdirde doldurulabilir veya daha sonra arayüz üzerinden işlenebilir.
-3. Kayıt olduktan sonra, "Ayarlar" panelinden kendi profilinize has API anahtarlarınızı da güncelleyebilirsiniz.
+1. **Başlat**: `python start.py` komutunu çalıştırın.
+2. **Kayıt**: E-posta ve şifrenizle yerel profilinizi oluşturun.
+3. **Araştır**: Bir konu yazın (Örn: "Kuantum Bilgisayarların Geleceği"), derinlik seçin (Ultra Mod tavsiye edilir) ve **Nova Nexus**'un interneti taramasını izleyin.
+4. **Analiz**: Rapor bittiğinde "Güvenilirlik Skoru"na bakın. Eğer skor 8 altındaysa, "Desteksiz İddialar" kutusundaki uyarıları okuyun.
+5. **Sakla**: Sağ alttaki "PDF İndir" butonuna basarak raporu arşivleyin.
 
 ---
 
-## 🛡️ Sentinel AI Doğrulama Sistemi
-
-Oluşturulan her rapor, ek olarak **Sentinel AI** adını verdiğimiz bir çapraz kontrol mekanizmasından geçer. Bu modül:
-- Yazılan bilgilerin kaynaklarla çelişip çelişmediğini denetler. Makalelerin linkini size [Kaynak 1] formatıyla referans gösterir.
-- "Halüsinasyon" riskini analiz eder ve size rapora ne kadar güvenebileceğinizi söyler (Örn: 9/10).
-- Tüm verileri isteğinize göre (MD, HTML, PDF, JSON) derleyerek indirebilmenizi sağlar.
+> [!IMPORTANT]
+> **Geliştirici Notu:** Bu proje ticari bir ürün değildir. Yapay zeka teknolojilerinin araştırma süreçlerini ne kadar hızlandırabileceğini kanıtlamak amacıyla geliştirilmiş bir **PoC (Proof of Concept)** çalışmasıdır.
 
 ---
-*Nova Nexus Search - Bilginin Gürültüsünden Arınmış Saf Gerçekliğe.*
+*Nova Nexus Search - Bilginin Sınırlarını Keşfedin.*
