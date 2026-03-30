@@ -26,6 +26,63 @@
 
 ---
 
+---
+
+## 🐞 Bilinen Hatalar & Eksiklikler (Known Bugs & Issues)
+
+- Ara yüz güncellemelerinde bazen beklenmeyen çökmeler yaşanabiliyor.
+- Türkçe ve diğer bazı dillerde zaman zaman çeviri/dil kaymaları ve lokalizasyon sorunları mevcut.
+- Offline mod ve multi-user desteği tamamen stabilize değil.
+- Derin arama (deep/ultra) modunda, nadiren beklenmedik model hataları alabilirsiniz (API sınırları/fallback tetikleniyor).
+- UI-klasöründeki bazı butonlar ve simgeler bazı sistemlerde gözükmeyebilir.
+- Sentinel AI "Güvenilirlik Skoru" algoritması gelişime açıktır ve yanlış/eksik puanlama verebilir.
+- Kod ve kullanıcı dokümantasyonu eksik/İngilizce/Türkçe karışık.
+
+> [ ] Lütfen yeni keşfettiğiniz hataları **GitHub Issues** üzerinden bildiriniz!
+
+---
+
+## 🤝 Katkı Sağlamak (Contributing)
+
+Her türlü katkıyı memnuniyetle karşılıyorum!
+
+- Kod katkısı yapmak için:
+  - Fork'la, yeni bir dalda (branch) çalış, Pull Request (PR) gönder.
+- Hataları (bug) veya geliştirme önerilerini:
+  - GitHub Issues üzerinden yazabilirsin.
+- Dokümantasyon katkısı, çeviri ve UI iyileştirmeleri de çok önemli!
+- Yardımcı olmak, sorular veya öneriler için Tartışmalar (Discussions) kısmını kullanabilirsin.
+
+> Not: Kodda veya README'de hata bulursan, doğrudan düzelt ve PR açabilirsin. Katkı yapan herkes README'de listelenecek!
+
+---
+
+## 🗺️ Yol Haritası (Roadmap)
+
+### v2.x - Mevcut 
+- [x] OpenRouter destekli hibrit arama ve raporlama
+- [x] PDF, HTML, Markdown, JSON dışa aktarım
+- [x] Çoklu dil desteği (TR/EN testli)
+- [x] Deep Crawler ve Sentinal AI entegre
+- [x] Fallback sistemli model mimarisi
+
+### v2.2 - Hedeflenenler
+- [ ] Offline (tamamen local) mod
+- [ ] Session tabanlı ve kullanıcıya özel arama geçmişi
+- [ ] UI iyileştirmeleri & daha modern tema seçenekleri
+- [ ] Yorum/Sonuç karşılaştırma modülü
+- [ ] Geliştirici ve API dökümantasyonunun tamamlanması
+- [ ] Yeni modellerle/anlık güncelleme desteği
+- [ ] Topluluk çevirileri ve yeni diller
+
+---
+
+## 📢 Destek & İletişim
+
+Her türlü soru, katkı veya öneri için GitHub Issues & Discussions bölümlerini kullanabilirsin veya direkt bana buradan ulaşabilirsin.
+
+---
+
 ## 🏗️ Mimari Akış: Bilginin Dönüşümü
 
 Aşağıdaki şemada, bir sorgunun ham internet verisinden rafine bir akademik rapora nasıl dönüştüğü ve **OpenRouter Fallback** sisteminin nasıl çalıştığı gösterilmektedir:
